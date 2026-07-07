@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 
 const yeniGorev = ref('')
 const gorevler = ref([])
@@ -12,8 +12,7 @@ onMounted(() => {
   }
 })
 
-// 2. 'gorevler' dizisinde bir şey değiştiğinde (ekleme, silme, yapıldı işareti) belleğe kaydet
-// deep: true parametresi, obje içindeki 'yapildi' durumunun değişimini de izlememizi sağlar.
+// 2. 'gorevler' dizisinde bir şey değiştiğinde belleğe kaydet
 watch(gorevler, (yeniDeger) => {
   localStorage.setItem('toDoListGorevler', JSON.stringify(yeniDeger))
 }, { deep: true })
@@ -42,76 +41,58 @@ const gorevEkle = () => {
 }
 
 const gorevSil = (silinecekGorev) => {
-  // Silme işlemini objenin tamamı yerine benzersiz ID üzerinden yapmak daha sağlıklıdır
   gorevler.value = gorevler.value.filter(gorev => gorev.id !== silinecekGorev.id)
 }
+
+
 </script>
-
 <template>
-  <div class="kutu">
-    <h1 style="padding-left: 100px;">To-Do List</h1>
-    
-    <form @submit.prevent="gorevEkle" class="ekleme-alani">
-      <input v-model="yeniGorev" placeholder="Yeni bir görev yaz..." />
-      <button type="submit">Ekle</button>
-    </form>
-
-    <div v-if="gorevler.length === 0">
-      <p>Henüz görev eklenmedi.</p>
-    </div>
-    
-    <ul>
-      <li v-for="gorev in gorevler" :key="gorev.id">
-        <label>
-          <input type="checkbox" v-model="gorev.yapildi" />
-          <span :class="{ ustuCizili: gorev.yapildi }">
+  <div class="min-h-screen bg-blue-700 flex items-center justify-center p-4">
+    <div class="bg-blue-500 shadow-md rounded-lg w-full max-w-md p-6">
+      <h1 class="text-2xl font-bold mb-4 text-center text-white">To-Do List</h1>
+      <div class="flex mb-4">
+        <input
+          v-model="yeniGorev"
+          @keyup.enter="gorevEkle"
+          type="text"
+          placeholder="Yeni görev ekle..."
+          class="flex-grow border rounded-l px-3 py-2 text-gray-900 focus:outline-none focus:ring focus:border-gray-300"
+        />
+        <button
+          @click="gorevEkle"
+          class="bg-cyan-500 text-white px-4 py-2 rounded-r hover:bg-cyan-600/50 transition-colors"
+        >
+          Ekle
+        </button>
+      </div>
+      <ul>
+        <li
+          v-for="gorev in gorevler"
+          :key="gorev.id"
+          class="flex items-center justify-between bg-slate-900/50 p-2 mb-2 rounded group hover:bg-slate-800/30 transition-colors"
+        >
+          <span :class="{'line-through text-gray-400': gorev.yapildi, 'text-white': !gorev.yapildi}">
             {{ gorev.metin }}
           </span>
-        </label>
-        <button @click="gorevSil(gorev)" class="sil-butonu">Sil</button>
-      </li>
-    </ul>
+          <div class="flex items-center space-x-2">
+            <input type="checkbox" v-model="gorev.yapildi" />
+            <button
+              @click="gorevSil(gorev)"
+              class="text-red-500 opacity-100"
+            >
+              Sil
+            </button>
+          </div>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
+  
 
 <style>
-.kutu {
-  max-width: 400px;
-  margin: 50px auto;
-  font-family: sans-serif;  
-}
-.ekleme-alani {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-.ekleme-alani input {
-  flex: 1;
-  padding: 10px;
-}
-ul {
-  padding: 0;
-}
-li {
-  list-style: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  background: #f4f4f4;
-  margin-bottom: 8px;
-  border-radius: 4px;
-}
-.ustuCizili {
-  text-decoration: line-through;
-  color: gray;
-}
-.sil-butonu {
-  background: #ff4757;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 3px;
-  cursor: pointer;
+/* Custom transitions or tweaks can go here, but most is handled by Tailwind! */
+.group:hover .opacity-0 {
+  opacity: 1;
 }
 </style>
