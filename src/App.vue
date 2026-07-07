@@ -4,7 +4,6 @@ import { ref, watch, onMounted } from 'vue'
 const yeniGorev = ref('')
 const gorevler = ref([])
 
-// 1. Sayfa yüklendiğinde tarayıcı belleğinden (localStorage) görevleri çek
 onMounted(() => {
   const kayitliGorevler = localStorage.getItem('toDoListGorevler')
   if (kayitliGorevler) {
@@ -12,7 +11,6 @@ onMounted(() => {
   }
 })
 
-// 2. 'gorevler' dizisinde bir şey değiştiğinde belleğe kaydet
 watch(gorevler, (yeniDeger) => {
   localStorage.setItem('toDoListGorevler', JSON.stringify(yeniDeger))
 }, { deep: true })
@@ -46,55 +44,65 @@ const gorevSil = (silinecekGorev) => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-indigo-700 text-slate-100 flex flex-col justify-between relative overflow-hidden py-12 px-4 sm:px-6 lg:px-8">
+  <div class="min-h-screen bg-gradient-to-r from-violet-600 to-indigo-600 text-slate-100 flex flex-col justify-between relative overflow-hidden py-12 px-4 sm:px-6 lg:px-8">
     <main class="w-full max-w-lg mx-auto z-10 flex-grow flex flex-col justify-center">
-      
       <div class="text-center mb-8">
-        
         <h1 class="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-violet-200 via-indigo-100 to-slate-200 bg-clip-text text-transparent">
           To-Do List
         </h1>
       </div>
 
       <form @submit.prevent="gorevEkle" class="flex gap-2 mb-6">
-          <input 
-            v-model="yeniGorev" 
-            type="text"
-            placeholder="Yeni bir görev ekle..." 
-            class="flex-grow bg-slate-950/80 border border-slate-800 focus:border-fuschia-500/80 focus:ring-2 focus:ring-violet-500/15 text-slate-100 placeholder-slate-500 text-sm rounded-2xl px-4 py-3.5 transition-all duration-200 outline-indigo-500/50 focus:outline-none focus:ring focus:ring-indigo-500/20"
-          />
-          <button 
-            type="submit" 
-            class="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 active:scale-95 text-white font-extrabold text-sm px-6 py-3.5 rounded-2xl transition-all duration-200 shadow-lg shadow-indigo-500/10 hover:shadow-indigo-500/20"
-          >
-            Ekle
-          </button>
-        </form>
-      <ul>
-        <li
-          v-for="gorev in gorevler"
-          :key="gorev.id"
-          class="flex items-center justify-between bg-slate-900/50 p-2 mb-2 rounded group hover:bg-slate-800/30 transition-colors"
+        <input 
+          v-model="yeniGorev" 
+          type="text"
+          placeholder="Yeni bir görev ekle..." 
+          class="flex-grow bg-slate-950/70 border border-slate-800 focus:border-violet-500/80 focus:ring-2 focus:ring-violet-500/15 text-slate-100 placeholder-slate-500 text-sm rounded-2xl px-4 py-3.5 transition-all duration-200 outline-none"
+        />
+        <button 
+          type="submit" 
+          class="bg-violet-600 active:scale-95 text-white font-extrabold text-sm px-6 py-3.5 rounded-2xl transition-all duration-200 shadow-lg shadow-violet-600 hover:shadow-violet-700/20"
         >
-          <span :class="{'line-through text-gray-400': gorev.yapildi, 'text-white': !gorev.yapildi}">
-            {{ gorev.metin }}
-          </span>
-          <div class="flex items-center space-x-2">
-            <input type="checkbox" v-model="gorev.yapildi" />
-            <button
-              @click="gorevSil(gorev)"
-              class="text-red-500 opacity-100 group-hover:opacity-100 transition-opacity"
-            >
-              Sil
-            </button>
-          </div>
-        </li>
-      </ul>
+          Ekle
+        </button>
+      </form>
+
+      <div class="bg-slate-950/60 border border-slate-800/50 rounded-3xl p-5 shadow-2xl backdrop-blur-md">
+        
+        <div v-if="gorevler.length === 0" class="text-center py-6 text-slate-400 text-sm">
+          Henüz bir görev eklemediniz.
+        </div>
+        
+        <ul v-else class="space-y-2.5">
+          <li
+            v-for="gorev in gorevler"
+            :key="gorev.id"
+            class="flex items-center justify-between bg-gradient-to-r from-indigo-800 to-violet-800 p-3 rounded-xl hover:brightness-110 transition-all duration-200"
+          >
+            <span :class="{'line-through text-slate-400/80': gorev.yapildi, 'text-white': !gorev.yapildi}">
+              {{ gorev.metin }}
+            </span>
+            <div class="flex items-center space-x-3">
+              <input 
+                type="checkbox" 
+                v-model="gorev.yapildi" 
+                class="w-4 h-5 accent-blue-700 cursor-pointer transition-all duration-200 rounded-sm hover:scale-110" 
+              />
+              <button
+                @click="gorevSil(gorev)"
+                class="text-red-400 hover:text-red-500 font-medium transition-colors text-sm"
+              >
+                Sil
+              </button>
+            </div>
+          </li>
+        </ul>
+      </div>
 
     </main>
   </div>
-  </template>
+</template>
 
 <style>
-
+/* Stil şablonu boş bırakıldı, tüm tasarım Tailwind CSS ile sağlandı. */
 </style>
