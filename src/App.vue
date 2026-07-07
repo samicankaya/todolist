@@ -64,7 +64,7 @@ const gorevSil = (silinecekGorev) => {
         
         <button 
           type="submit" 
-          class="col-start-2 col-end-3 bg-violet-600 hover:bg-violet-700 active:scale-95 text-white font-extrabold text-sm px-6 py-3.5 rounded-2xl transition-all duration-200 shadow-lg shadow-violet-600 hover:shadow-violet-700/20"
+          class="col-start-2 col-end-3 bg-violet-600 hover:bg-violet-700 active:scale-95 text-white font-extrabold text-sm px-6 py-3.5 rounded-2xl transition-all duration-200"
         >
           Ekle
         </button>
