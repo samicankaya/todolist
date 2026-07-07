@@ -1,8 +1,22 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 
 const yeniGorev = ref('')
 const gorevler = ref([])
+
+// 1. Sayfa yüklendiğinde tarayıcı belleğinden (localStorage) görevleri çek
+onMounted(() => {
+  const kayitliGorevler = localStorage.getItem('toDoListGorevler')
+  if (kayitliGorevler) {
+    gorevler.value = JSON.parse(kayitliGorevler)
+  }
+})
+
+// 2. 'gorevler' dizisinde bir şey değiştiğinde (ekleme, silme, yapıldı işareti) belleğe kaydet
+// deep: true parametresi, obje içindeki 'yapildi' durumunun değişimini de izlememizi sağlar.
+watch(gorevler, (yeniDeger) => {
+  localStorage.setItem('toDoListGorevler', JSON.stringify(yeniDeger))
+}, { deep: true })
 
 const gorevEkle = () => {
   const eklenecekMetin = yeniGorev.value.trim()
@@ -28,7 +42,8 @@ const gorevEkle = () => {
 }
 
 const gorevSil = (silinecekGorev) => {
-  gorevler.value = gorevler.value.filter(gorev => gorev !== silinecekGorev)
+  // Silme işlemini objenin tamamı yerine benzersiz ID üzerinden yapmak daha sağlıklıdır
+  gorevler.value = gorevler.value.filter(gorev => gorev.id !== silinecekGorev.id)
 }
 </script>
 
